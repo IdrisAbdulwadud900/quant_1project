@@ -1437,71 +1437,63 @@
             },
 
             // Load sample trends
-            loadTrends() {
-                const now = Date.now();
-                this.trends = [
-                    {
-                        id: 1,
-                        title: 'UK PM announces surprise cabinet reshuffle',
-                        category: 'political',
-                        trigger: 'Breaking: Three ministers removed within 2 hours, no prior indication in media',
-                        speed: 'exploding',
-                        geo: 'UK',
-                        driver: 'Media',
-                        stage: 'early',
-                        priority: true,
-                        analysis: 'Sudden institutional action with no warning, creating vacuum of speculation',
-                        prediction: 85,
-                        isNew: true,
-                        timestamp: now
-                    },
-                    {
-                        id: 2,
-                        title: '"Mate tax" meme format crosses into US mainstream',
-                        category: 'cultural',
-                        trigger: 'UK slang joke format suddenly appearing in US TikTok/Twitter with identical phrasing',
-                        speed: 'accelerating',
-                        geo: 'Global',
-                        driver: 'Grassroots memes',
-                        stage: 'early',
-                        priority: true,
-                        analysis: 'Country-specific humor escaping its niche = HIGH PRIORITY signal',
-                        prediction: 92,
-                        isNew: false,
-                        timestamp: now - 3600000
-                    },
-                    {
-                        id: 3,
-                        title: 'CEO collapse video spreading rapidly',
-                        category: 'viral',
-                        trigger: 'Live-streamed earnings call - CEO visible medical incident, clip being reposted with same 15-second timestamp',
-                        speed: 'exploding',
-                        geo: 'US',
-                        driver: 'Influencers',
-                        stage: 'mid',
-                        priority: false,
-                        analysis: 'Shocking visual moment with clear viral mechanics (specific clip timing = high repetition)',
-                        prediction: 78,
-                        isNew: false,
-                        timestamp: now - 7200000
-                    },
-                    {
-                        id: 4,
-                        title: 'Federal crypto framework leaked document',
-                        category: 'tech',
-                        trigger: 'Anonymous source posted 40-page PDF, multiple crypto influencers quoting identical sections within 15min',
-                        speed: 'exploding',
-                        geo: 'US',
-                        driver: 'Influencers',
-                        stage: 'early',
-                        priority: true,
-                        analysis: 'Speed + repetition of identical quotes = coordinated attention spike',
-                        prediction: 88,
-                        isNew: true,
-                        timestamp: now - 1800000
-                    }
-                ];
-
+            async loadTrends() {
+    try {
+        // Show loading
+        const container = document.getElementById('trends-container');
+        if (container) {
+            container.innerHTML = '<div style="text-align: center; padding: 3rem;"><div class="loading-spinner"></div><p style="margin-top: 1rem; color: var(--text-secondary);">Loading real-time trends...</p></div>';
+        }
+        
+        // Fetch from aggregator API
+        const response = await fetch('/api/aggregate-trends');
+        
+        if (!response.ok) {
+            throw new Error(`API error: ${response.status}`);
+        }
+        
+        const trends = await response.json();
+        
+        // Update state
+        this.trends = trends;
+        
+        // Update history
+        trends.forEach(trend => {
+            if (!this.trendHistory[trend.id]) {
+                this.trendHistory[trend.id] = [];
+            }
+            this.trendHistory[trend.id].push({
+                timestamp: Date.now(),
+                mentions: trend.metrics?.volume || Math.floor(Math.random() * 10000) + 1000
+            });
+        });
+        
+        // Check alerts
+        this.checkAlerts();
+        
+        // Render
+        this.render();
+        
+        // Success notification
+        this.showNotification('Scan Complete', `Found ${trends.length} real-time trends!`, 'success');
+        
+    } catch (error) {
+        console.error('Error loading trends:', error);
+        this.showNotification('Error', 'Failed to load trends. Please try again.', 'error');
+        
+        // Show error state
+        const container = document.getElementById('trends-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">⚠️</div>
+                    <div class="empty-title">Failed to Load Trends</div>
+                    <div class="empty-text">${error.message}</div>
+                    <button class="btn btn-primary" onclick="app.runScan()" style="margin-top: 1rem;">Try Again</button>
+                </div>
+            `;
+        }
+    }
                 // Track history
                 this.trends.forEach(trend => {
                     if (!this.trendHistory[trend.id]) {
