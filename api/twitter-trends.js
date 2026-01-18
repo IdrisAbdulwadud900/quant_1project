@@ -41,31 +41,47 @@ module.exports = async (req, res) => {
       
       const priority = volume > 50000 || (volume < 10000 && volume > 1000);
       
-      let prediction = 50;
-      if (volume > 100000) prediction = 85;
-      else if (volume > 50000) prediction = 75;
-      else if (volume > 10000) prediction = 65;
-      else if (volume < 5000) prediction = 90;
+// Use advanced prediction engine
+    const TrendPredictor = require('./prediction-engine');
+    const predictor = new TrendPredictor();
+
+// Use advanced AI prediction
+    const predictionResult = predictor.predict({
+    speed: speed,
+    stage: stage,
+    metrics: { volume: volume },
+    category: detectCategory(trend.name),
+    driver: 'Grassroots memes',
+    timestamp: Date.now(),
+    isNew: Math.random() > 0.7,
+    title: trend.name
+});
+// At the top of the file, after require statements
 
       return {
-        id: `twitter-${index}`,
-        title: trend.name || trend.query || `Trend ${index + 1}`,
-        category: detectCategory(trend.name || trend.query || ''),
-        trigger: `Trending on Twitter with ${volume.toLocaleString()} tweets`,
-        speed: speed,
-        geo: 'Global',
-        driver: 'Grassroots memes',
-        stage: stage,
-        priority: priority,
-        analysis: `Twitter trend showing ${speed} momentum. ${priority ? 'HIGH PRIORITY - Early detection opportunity.' : 'Monitor for growth.'}`,
-        prediction: prediction,
-        isNew: Math.random() > 0.7,
-        timestamp: Date.now(),
-        metrics: {
-          volume: volume,
-          source: 'Twitter'
-        }
-      };
+  id: `twitter-${index}`,
+  title: trend.name,
+  category: detectCategory(trend.name),
+  trigger: `Trending on Twitter with ${volume.toLocaleString()} tweets`,
+  speed: speed,
+  geo: 'Global',
+  driver: 'Grassroots memes',
+  stage: stage,
+  priority: priority,
+  analysis: `Twitter trend showing ${speed} momentum. ${priority ? 'HIGH PRIORITY - Early detection opportunity.' : 'Monitor for growth.'}`,
+  prediction: predictionResult.score,
+  predictionDetails: {
+    confidence: predictionResult.confidence,
+    reasoning: predictionResult.reasoning.join(' • '),
+    tier: predictionResult.tier
+  },
+  isNew: Math.random() > 0.7,
+  timestamp: Date.now(),
+  metrics: {
+    volume: volume,
+    source: 'Twitter'
+  }
+};
     });
 
     res.status(200).json(trends);
