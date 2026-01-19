@@ -15,7 +15,7 @@ module.exports = async (req, res) => {
 
     const data = await response.json();
 
-    if (!data.articles) {
+    if (!data.articles || data.articles.length === 0) {
       throw new Error('No articles returned');
     }
 
@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
       return {
         id: `news-${index}`,
         title: article.title,
-        category: detectCategory(article.title),
+        category: detectCategory(article.title + ' ' + (article.description || '')),
         trigger: `Breaking news from ${article.source.name}`,
         speed: 'exploding',
         geo: 'US',
@@ -60,3 +60,32 @@ module.exports = async (req, res) => {
     });
   }
 };
+
+function detectCategory(text) {
+  const lower = text.toLowerCase();
+  
+  if (lower.includes('trump') || lower.includes('biden') || lower.includes('election') || 
+      lower.includes('politic') || lower.includes('government')) {
+    return 'political';
+  }
+  
+  if (lower.includes('breaking') || lower.includes('urgent') || lower.includes('alert')) {
+    return 'breaking';
+  }
+  
+  if (lower.includes('crypto') || lower.includes('bitcoin') || lower.includes('stock') ||
+      lower.includes('market') || lower.includes('tech') || lower.includes('ai')) {
+    return 'tech';
+  }
+  
+  if (lower.includes('video') || lower.includes('viral') || lower.includes('watch')) {
+    return 'viral';
+  }
+  
+  if (lower.includes('celeb') || lower.includes('kardashian') || lower.includes('swift') ||
+      lower.includes('beyonce') || lower.includes('drake')) {
+    return 'celebrity';
+  }
+  
+  return 'cultural';
+}
