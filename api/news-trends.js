@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
       return {
         id: `news-${index}`,
         title: article.title,
-        category: 'breaking',
+        category: detectCategory(article.title),
         trigger: `Breaking news from ${article.source.name}`,
         speed: 'exploding',
         geo: 'US',

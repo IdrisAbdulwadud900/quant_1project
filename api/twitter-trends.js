@@ -101,40 +101,44 @@ function detectCategory(text) {
   // Political keywords (expanded)
   if (lower.includes('trump') || lower.includes('biden') || lower.includes('election') || 
       lower.includes('politic') || lower.includes('government') || lower.includes('congress') ||
-      lower.includes('senate') || lower.includes('vote') || lower.includes('president')) {
+      lower.includes('senate') || lower.includes('vote') || lower.includes('president') ||
+      lower.includes('kamala') || lower.includes('white house')) {
     return 'political';
   }
   
   // Breaking news keywords
   if (lower.includes('breaking') || lower.includes('alert') || lower.includes('just in') ||
-      lower.includes('developing') || lower.includes('urgent')) {
+      lower.includes('developing') || lower.includes('urgent') || lower.includes('live')) {
     return 'breaking';
   }
   
   // Tech/Crypto keywords (expanded)
   if (lower.includes('crypto') || lower.includes('bitcoin') || lower.includes('btc') || 
       lower.includes('eth') || lower.includes('ethereum') || lower.includes('nft') ||
-      lower.includes('blockchain') || lower.includes('tech') || lower.includes('ai') ||
+      lower.includes('blockchain') || lower.includes('ai') || lower.includes('chatgpt') ||
       lower.includes('openai') || lower.includes('google') || lower.includes('apple') ||
-      lower.includes('microsoft') || lower.includes('meta') || lower.includes('tesla')) {
+      lower.includes('microsoft') || lower.includes('meta') || lower.includes('tesla') ||
+      lower.includes('stock') || lower.includes('market') || lower.includes('tech')) {
     return 'tech';
   }
   
-  // Viral keywords (expanded)
+  // Viral/Video keywords (expanded)
   if (lower.includes('video') || lower.includes('watch') || lower.includes('viral') ||
       lower.includes('caught on camera') || lower.includes('footage') || lower.includes('clip') ||
-      lower.includes('tiktok') || lower.includes('youtube') || lower.includes('stream')) {
+      lower.includes('tiktok') || lower.includes('youtube') || lower.includes('stream') ||
+      lower.includes('trending') || lower.includes('views') || lower.includes('meme')) {
     return 'viral';
   }
   
   // Celebrity keywords (expanded)
-  if (lower.includes('celeb') || lower.includes('actor') || lower.includes('singer') ||
-      lower.includes('kardashian') || lower.includes('taylor swift') || lower.includes('beyonce') ||
-      lower.includes('drake') || lower.includes('kanye') || lower.includes('musk')) {
+  if (lower.includes('celeb') || lower.includes('kardashian') || lower.includes('taylor swift') || 
+      lower.includes('beyonce') || lower.includes('drake') || lower.includes('kanye') ||
+      lower.includes('elon') || lower.includes('rihanna') || lower.includes('bieber') ||
+      lower.includes('ariana') || lower.includes('selena')) {
     return 'celebrity';
   }
   
-  // Cultural/Meme keywords (DEFAULT - most trends are cultural)
-  // If nothing else matches, it's probably cultural/meme content
+  // IMPORTANT: Default to 'cultural' for everything else
+  // Most Twitter trends are cultural/meme content
   return 'cultural';
 }

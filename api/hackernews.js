@@ -44,7 +44,7 @@ module.exports = async (req, res) => {
       return {
         id: `hn-${index}`,
         title: story.title,
-        category: 'tech',
+        category: detectCategory(article.title),
         trigger: `HackerNews • ${score} points • ${story.descendants || 0} comments`,
         speed: speed,
         geo: 'Global',
@@ -74,3 +74,31 @@ module.exports = async (req, res) => {
     });
   }
 };
+function detectCategory(text) {
+  const lower = text.toLowerCase();
+  
+  if (lower.includes('trump') || lower.includes('biden') || lower.includes('election') || 
+      lower.includes('politic') || lower.includes('government')) {
+    return 'political';
+  }
+  
+  if (lower.includes('breaking') || lower.includes('urgent') || lower.includes('alert')) {
+    return 'breaking';
+  }
+  
+  if (lower.includes('crypto') || lower.includes('bitcoin') || lower.includes('stock') ||
+      lower.includes('market') || lower.includes('tech') || lower.includes('ai')) {
+    return 'tech';
+  }
+  
+  if (lower.includes('video') || lower.includes('viral') || lower.includes('watch')) {
+    return 'viral';
+  }
+  
+  if (lower.includes('celeb') || lower.includes('kardashian') || lower.includes('swift') ||
+      lower.includes('beyonce') || lower.includes('drake')) {
+    return 'celebrity';
+  }
+  
+  return 'cultural';
+}
