@@ -1470,6 +1470,9 @@
         
         // Check alerts
         this.checkAlerts();
+        // Send Telegram alerts for HIGH PRIORITY trends
+
+        this.sendTelegramAlerts();
         
         // Render
         this.render();
@@ -1507,6 +1510,9 @@
 
                 // Check alerts
                 this.checkAlerts();
+                
+                // Send Telegram alerts for HIGH PRIORITY trends
+                this.sendTelegramAlerts();
             },
 
             // Check if any trends match alert keywords
@@ -1526,7 +1532,8 @@
                     });
                 });
             },
-
+            
+            
             // Send alert
             sendAlert(alert, trend) {
                 const message = `🚨 ALERT: ${trend.title}`;
@@ -1552,6 +1559,42 @@
                 //         text: message
                 //     })
                 // });
+            },
+
+            // Send Telegram alerts for HIGH PRIORITY trends (NEW!)
+            async sendTelegramAlerts() {
+                // Only send if Telegram is configured
+                if (!this.settings.telegramToken || !this.settings.telegramChat) {
+                    return;
+                }
+
+                // Find HIGH PRIORITY trends
+                const priorityTrends = this.trends.filter(t => t.priority);
+
+                for (const trend of priorityTrends) {
+                    // Check if we already sent alert for this trend (use sessionStorage)
+                    const alertKey = `telegram-sent-${trend.id}`;
+                    if (sessionStorage.getItem(alertKey)) {
+                        continue; // Already sent
+                    }
+
+                    try {
+                        // Send alert via API
+                        const response = await fetch('/api/telegram-alert', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ trend })
+                        });
+
+                        if (response.ok) {
+                            // Mark as sent
+                            sessionStorage.setItem(alertKey, 'true');
+                            console.log('✅ Telegram alert sent:', trend.title);
+                        }
+                    } catch (error) {
+                        console.error('❌ Failed to send Telegram alert:', error);
+                    }
+                }
             },
 
             // Filter trends

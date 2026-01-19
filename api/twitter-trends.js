@@ -98,21 +98,43 @@ module.exports = async (req, res) => {
 function detectCategory(text) {
   const lower = text.toLowerCase();
   
-  if (lower.includes('election') || lower.includes('politic') || lower.includes('government')) {
+  // Political keywords (expanded)
+  if (lower.includes('trump') || lower.includes('biden') || lower.includes('election') || 
+      lower.includes('politic') || lower.includes('government') || lower.includes('congress') ||
+      lower.includes('senate') || lower.includes('vote') || lower.includes('president')) {
     return 'political';
   }
-  if (lower.includes('breaking') || lower.includes('news')) {
+  
+  // Breaking news keywords
+  if (lower.includes('breaking') || lower.includes('alert') || lower.includes('just in') ||
+      lower.includes('developing') || lower.includes('urgent')) {
     return 'breaking';
   }
-  if (lower.includes('crypto') || lower.includes('bitcoin') || lower.includes('btc') || lower.includes('eth')) {
+  
+  // Tech/Crypto keywords (expanded)
+  if (lower.includes('crypto') || lower.includes('bitcoin') || lower.includes('btc') || 
+      lower.includes('eth') || lower.includes('ethereum') || lower.includes('nft') ||
+      lower.includes('blockchain') || lower.includes('tech') || lower.includes('ai') ||
+      lower.includes('openai') || lower.includes('google') || lower.includes('apple') ||
+      lower.includes('microsoft') || lower.includes('meta') || lower.includes('tesla')) {
     return 'tech';
   }
-  if (lower.includes('video') || lower.includes('watch') || lower.includes('viral')) {
+  
+  // Viral keywords (expanded)
+  if (lower.includes('video') || lower.includes('watch') || lower.includes('viral') ||
+      lower.includes('caught on camera') || lower.includes('footage') || lower.includes('clip') ||
+      lower.includes('tiktok') || lower.includes('youtube') || lower.includes('stream')) {
     return 'viral';
   }
-  if (lower.includes('celeb') || lower.includes('actor') || lower.includes('singer')) {
+  
+  // Celebrity keywords (expanded)
+  if (lower.includes('celeb') || lower.includes('actor') || lower.includes('singer') ||
+      lower.includes('kardashian') || lower.includes('taylor swift') || lower.includes('beyonce') ||
+      lower.includes('drake') || lower.includes('kanye') || lower.includes('musk')) {
     return 'celebrity';
   }
   
+  // Cultural/Meme keywords (DEFAULT - most trends are cultural)
+  // If nothing else matches, it's probably cultural/meme content
   return 'cultural';
 }
