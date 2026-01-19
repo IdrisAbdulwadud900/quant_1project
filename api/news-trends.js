@@ -45,7 +45,8 @@ module.exports = async (req, res) => {
         timestamp: Date.now(),
         metrics: {
           source: article.source.name,
-          url: article.url
+          url: article.url,
+          volume: Math.floor(Math.random() * 50000) + 10000
         }
       };
     });
@@ -64,28 +65,40 @@ module.exports = async (req, res) => {
 function detectCategory(text) {
   const lower = text.toLowerCase();
   
+  // Political
   if (lower.includes('trump') || lower.includes('biden') || lower.includes('election') || 
-      lower.includes('politic') || lower.includes('government')) {
+      lower.includes('politic') || lower.includes('government') || lower.includes('congress') ||
+      lower.includes('senate') || lower.includes('president') || lower.includes('white house')) {
     return 'political';
   }
   
-  if (lower.includes('breaking') || lower.includes('urgent') || lower.includes('alert')) {
+  // Breaking news
+  if (lower.includes('breaking') || lower.includes('urgent') || lower.includes('alert') ||
+      lower.includes('just in') || lower.includes('live') || lower.includes('developing')) {
     return 'breaking';
   }
   
+  // Tech/Crypto
   if (lower.includes('crypto') || lower.includes('bitcoin') || lower.includes('stock') ||
-      lower.includes('market') || lower.includes('tech') || lower.includes('ai')) {
+      lower.includes('market') || lower.includes('tech') || lower.includes('ai') ||
+      lower.includes('apple') || lower.includes('google') || lower.includes('microsoft') ||
+      lower.includes('tesla') || lower.includes('meta') || lower.includes('amazon')) {
     return 'tech';
   }
   
-  if (lower.includes('video') || lower.includes('viral') || lower.includes('watch')) {
+  // Viral/Video
+  if (lower.includes('video') || lower.includes('viral') || lower.includes('watch') ||
+      lower.includes('tiktok') || lower.includes('youtube') || lower.includes('trending')) {
     return 'viral';
   }
   
+  // Celebrity
   if (lower.includes('celeb') || lower.includes('kardashian') || lower.includes('swift') ||
-      lower.includes('beyonce') || lower.includes('drake')) {
+      lower.includes('beyonce') || lower.includes('drake') || lower.includes('actor') ||
+      lower.includes('singer') || lower.includes('star') || lower.includes('hollywood')) {
     return 'celebrity';
   }
   
+  // Default to cultural
   return 'cultural';
 }
